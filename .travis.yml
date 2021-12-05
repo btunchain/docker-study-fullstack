@@ -23,7 +23,7 @@ after_success:
   - docker push btunchain/docker-backend
   - docker push btunchain/docker-nginx
 
-# deploy
+# deploy222
 deploy: 
   provider: elasticbeanstalk
   region: "ap-northeast-2"

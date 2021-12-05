@@ -30,7 +30,7 @@ function App() {
 					setValue("");
 				}
 				else {
-					alert('값을 DB에 넣는데 실패하였습니다.');
+					alert('값을 DB에 넣는데 실패하였습니다.!!');
 				}
 			})
 	}
