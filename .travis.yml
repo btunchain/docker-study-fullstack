@@ -1,0 +1,23 @@
+language: generic
+
+sudo: required
+
+services: 
+  - docker
+
+before_install: 
+  - docker build -t btunchain/react-test-app -f ./frontend/Dockerfile.dev ./frontend
+    
+script: 
+  - docker run -e CI=true btunchain/react-test-app npm run test
+
+after_success: 
+  - docker build -t btunchain/docker-frontend ./frontend
+  - docker build -t btunchain/docker-backend ./backend
+  - docker build -t btunchain/docker-nginx ./nginx
+    
+  - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_ID" --password-stdin
+    
+  - docker push btunchain/docker-frontend
+  - docker push btunchain/docker-backend
+  - docker push btunchain/docker-nginx
