@@ -12,12 +12,27 @@ script:
   - docker run -e CI=true btunchain/react-test-app npm run test
 
 after_success: 
+  # image build
   - docker build -t btunchain/docker-frontend ./frontend
   - docker build -t btunchain/docker-backend ./backend
   - docker build -t btunchain/docker-nginx ./nginx
     
   - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_ID" --password-stdin
-    
+  # docker hub push
   - docker push btunchain/docker-frontend
   - docker push btunchain/docker-backend
   - docker push btunchain/docker-nginx
+
+# deploy
+deploy: 
+  provider: elasticbeanstalk
+  region: "ap-northeast-2"
+  app: "docker-fullstack-app"
+  env: "Dockerfullstackapp-env"
+  bucket_name: elasticbeanstalk-ap-northeast-2-266069572156
+  bucket_path: "docker-fullstack-app"
+  on: 
+    branch: master
+    
+access_key_id: $AWS_ACCESS_KEY
+secret_access_key: $AWS_SECREST_ACCESS_KEY

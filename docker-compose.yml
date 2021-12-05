@@ -1,33 +1,48 @@
-version: "3"
+version: "2.4"
 services:
   frontend:
-    build:
+    image: btunchain/docker-frontend
+#    build:
       # 도커파일 위치 및 파일명
-      dockerfile: Dockerfile.dev
-      context: ./frontend
+#      dockerfile: Dockerfile.dev
+#      context: ./frontend
     volumes:
       - /app/node_modules
       - ./frontend:/app
     environment:
       - CHOKIDAR_USEPOLLING=true
     stdin_open: true
+    mem_limit: 128m
   nginx:
     # 재시작 정책. no: 재시작 X, always:항상, 
     # on-failure:컨테이너 멈췄을때 재시작, unless-stopped:개발자가 멈추려고 할때 말고는 항상 재시작
     restart: always
-    build:
-      dockerfile: Dockerfile
-      context: ./nginx
+    image: btunchain/docker-nginx
+#    build:
+#      dockerfile: Dockerfile
+#      context: ./nginx
     ports:
-      - "3000:80"
+      - "80:80"
+    mem_limit: 128m
+    links:
+      - frontend
+      - backend
   backend:
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./backend
+    image: btunchain/docker-backend
+#    build:
+#      dockerfile: Dockerfile.dev
+#      context: ./backend
     container_name: app_backend
     volumes:
       - /app/node_modules
       - ./backend:/app
+    environment:
+      MYSQL_HOST: docker-fullstack-mysql.cpop6fpxlwn7.ap-northeast-2.rds.amazonaws.com
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: choi1824
+      MYSQL_DATABASE: myapp
+      MYSQL_PORT: 3306
+    mem_limit: 128m
 #  mysql:
 #    build: ./mysql
 #    restart: unless-stopped
